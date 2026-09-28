@@ -97,6 +97,66 @@
     });
   });
 
+  // Referenzen: Großansicht mit Blättern innerhalb einer Kategorie
+  var lightbox = document.querySelector("[data-lightbox]");
+  if (lightbox && lightbox.showModal) {
+    var lbBild = lightbox.querySelector("img");
+    var lbText = lightbox.querySelector("figcaption");
+    var liste = [], stelle = 0, ausloeser = null;
+
+    var zeigeBild = function (i) {
+      stelle = (i + liste.length) % liste.length;
+      var k = liste[stelle];
+      lbBild.src = k.getAttribute("data-gross");
+      lbBild.alt = k.getAttribute("data-titel") || "";
+      lbText.textContent = "";
+      var b = document.createElement("b");
+      b.textContent = (stelle + 1) + " / " + liste.length;
+      lbText.appendChild(b);
+      lbText.appendChild(document.createTextNode(k.getAttribute("data-titel") || ""));
+      var mehrere = liste.length > 1;
+      lightbox.querySelector("[data-zurueck]").hidden = !mehrere;
+      lightbox.querySelector("[data-vor]").hidden = !mehrere;
+    };
+
+    document.querySelectorAll("[data-galerie] button").forEach(function (k) {
+      k.addEventListener("click", function () {
+        liste = Array.prototype.slice.call(k.closest("[data-galerie]").querySelectorAll("button"));
+        ausloeser = k;
+        zeigeBild(liste.indexOf(k));
+        lightbox.showModal();
+      });
+    });
+    lightbox.querySelector("[data-zu]").addEventListener("click", function () { lightbox.close(); });
+    lightbox.querySelector("[data-zurueck]").addEventListener("click", function () { zeigeBild(stelle - 1); });
+    lightbox.querySelector("[data-vor]").addEventListener("click", function () { zeigeBild(stelle + 1); });
+    lightbox.addEventListener("click", function (e) { if (e.target === lightbox) lightbox.close(); });
+    lightbox.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") zeigeBild(stelle - 1);
+      if (e.key === "ArrowRight") zeigeBild(stelle + 1);
+    });
+    lightbox.addEventListener("close", function () { if (ausloeser) ausloeser.focus(); });
+  }
+
+  // Referenzen: aktive Kategorie in der Leiste markieren
+  var chips = document.querySelectorAll(".kategorien a");
+  if (chips.length && "IntersectionObserver" in window) {
+    var markieren = function (id) {
+      chips.forEach(function (c) {
+        var aktiv = c.getAttribute("href") === "#" + id;
+        c.classList.toggle("aktiv", aktiv);
+        if (aktiv && c.scrollIntoView) {
+          var leiste = c.parentNode;
+          leiste.scrollTo({ left: c.offsetLeft - leiste.clientWidth / 2 + c.clientWidth / 2, behavior: "smooth" });
+        }
+      });
+    };
+    var sichtbereich = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (e) { if (e.isIntersecting) markieren(e.target.id); });
+    }, { rootMargin: "-160px 0px -60% 0px" });
+    document.querySelectorAll("[data-bereich]").forEach(function (b) { sichtbereich.observe(b); });
+  }
+
   // Abschnitte beim Scrollen einblenden
   var elemente = document.querySelectorAll(".einblenden");
   if (!("IntersectionObserver" in window)) {
