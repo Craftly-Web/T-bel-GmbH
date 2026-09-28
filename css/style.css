@@ -1028,3 +1028,176 @@ button, input, textarea { font: inherit; color: inherit; }
 .band-cta h2 { color: var(--putz); }
 .band-cta p { margin: 18px 0 0; max-width: 560px; color: rgba(246, 240, 230, 0.75); font-size: 18px; }
 .band-cta .knoepfe { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ==========================================================================
+   Leistungsseite
+   ========================================================================== */
+
+[id] { scroll-margin-top: 96px; }
+
+/* Sprungmarken im Seitenkopf */
+.sprung {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.sprung a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(246, 240, 230, 0.12);
+  border-radius: 6px;
+  background: rgba(246, 240, 230, 0.04);
+  font-weight: 620;
+  font-stretch: 104%;
+  font-size: 15.5px;
+  line-height: 1.25;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.sprung a:hover { background: rgba(246, 240, 230, 0.09); border-color: rgba(246, 240, 230, 0.3); transform: translateY(-2px); }
+.sprung svg { width: 22px; height: 22px; flex: none; color: var(--ziegel-hell); }
+@media (max-width: 420px) { .sprung { grid-template-columns: 1fr; } }
+
+/* Ein Leistungsbereich */
+.bereich {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: start;
+}
+.bereich + .bereich {
+  margin-top: clamp(72px, 9vw, 120px);
+  padding-top: clamp(72px, 9vw, 120px);
+  border-top: 1px solid var(--linie);
+}
+.bereich__bild { position: sticky; top: 110px; margin: 0; }
+.bereich__bild img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: var(--schatten);
+}
+@media (max-width: 860px) {
+  .bereich { grid-template-columns: 1fr; gap: 28px; }
+  .bereich__bild { position: static; }
+  .symbolfeld { aspect-ratio: 16 / 7; }
+  .symbolfeld svg { width: 18%; }
+}
+@media (min-width: 861px) {
+  .bereich--rechts .bereich__bild { order: 2; }
+  .bereich--rechts { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+
+/* Symbolfeld, wo kein Foto da ist */
+.symbolfeld {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  color: var(--ziegel-hell);
+  background:
+    linear-gradient(rgba(246, 240, 230, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(246, 240, 230, 0.05) 1px, transparent 1px),
+    radial-gradient(80% 80% at 70% 20%, #3a3b41, #1f2024);
+  background-size: 28px 28px, 28px 28px, auto;
+  box-shadow: var(--schatten);
+}
+.symbolfeld svg { width: 34%; height: auto; stroke-width: 1.2; }
+.symbolfeld::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -30%;
+  width: 90%;
+  aspect-ratio: 2 / 1;
+  transform: translateX(-50%);
+  border: 2px solid rgba(246, 240, 230, 0.08);
+  border-bottom: 0;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  background: rgba(246, 240, 230, 0.03);
+}
+.symbolfeld__wert {
+  position: absolute;
+  left: 22px;
+  bottom: 18px;
+  color: var(--putz);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 800;
+  font-stretch: 88%;
+  line-height: 1;
+}
+.symbolfeld__wert small { display: block; margin-top: 6px; font-size: 13px; font-weight: 650; font-stretch: 112%; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(246, 240, 230, 0.6); }
+
+.bereich__kopf { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.bereich__kopf .leistung__symbol { width: 48px; height: 48px; }
+.bereich__nr { font-size: 14px; font-weight: 700; font-stretch: 112%; letter-spacing: 0.1em; color: var(--ziegel); }
+.bereich h2 { margin-bottom: 26px; }
+
+/* Aufzählung */
+.punkte {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.punkte li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 18px;
+  background: #fffaf2;
+  border: 1px solid var(--linie);
+  border-radius: 6px;
+  font-size: 16.5px;
+  font-weight: 560;
+  line-height: 1.45;
+}
+.punkte li::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  background: var(--ziegel);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 12 12 4l9.5 8'/%3E%3Cpath d='m8 15 3 3 5-6'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 12 12 4l9.5 8'/%3E%3Cpath d='m8 15 3 3 5-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.punkte li.breit { grid-column: 1 / -1; }
+.punkte li > div { flex: 1; min-width: 0; }
+
+.grosswert {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 26px 24px;
+  background: #fffaf2;
+  border: 1px solid var(--linie);
+  border-radius: 6px;
+}
+.grosswert b {
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 800;
+  font-stretch: 88%;
+  line-height: 1;
+  color: var(--ziegel);
+}
+.grosswert span { font-size: 17px; font-weight: 600; }
+.abschnitt--sand .punkte li { background: var(--putz); }
+@media (max-width: 560px) { .punkte { grid-template-columns: 1fr; } }
+
+.marken { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.marken span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--putz-2);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
