@@ -458,7 +458,8 @@ button, input, textarea { font: inherit; color: inherit; }
   transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .material:hover img { transform: scale(1.05); }
-.material figcaption {
+.material figcaption,
+.material__titel {
   position: absolute;
   left: 0; right: 0; bottom: 0;
   padding: 48px 20px 18px;
@@ -1586,3 +1587,64 @@ button, input, textarea { font: inherit; color: inherit; }
   .generation__nr { display: flex; margin-bottom: 10px; }
   .generation__nr .augenbraue__text { font-size: 12px; letter-spacing: 0.1em; }
 }
+
+/* ==========================================================================
+   Startseite mit echten Texten
+   ========================================================================== */
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(38px, 5vw, 66px);
+  font-weight: 800;
+  font-stretch: 92%;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: normal; color: var(--ziegel-hell); }
+.hero__lead {
+  margin: 24px 0 0;
+  max-width: 480px;
+  font-size: clamp(17px, 1.4vw, 19px);
+  line-height: 1.6;
+  color: rgba(246, 240, 230, 0.78);
+}
+.hero .augenbraue__text { color: var(--ziegel-hell); }
+
+.kopfblock h2 { margin: 0; }
+.kopfblock__text {
+  max-width: 460px;
+  justify-self: end;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+@media (max-width: 800px) { .kopfblock__text { justify-self: start; } }
+
+.leistung__text { flex: 1; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--text-2); }
+
+.material { display: block; aspect-ratio: 4 / 3; }
+
+.firma__text h2 { margin: 0; }
+.firma__text .fliesstext { margin-top: 22px; font-size: 17.5px; }
+.zahlen b {
+  display: block;
+  font-size: clamp(34px, 4vw, 46px);
+  font-weight: 800;
+  font-stretch: 90%;
+  line-height: 1;
+  color: var(--ziegel);
+}
+.zahlen span { display: block; margin-top: 8px; font-size: 14.5px; font-weight: 560; line-height: 1.4; color: var(--text-2); }
+
+.schritt h3 { margin: 0 0 10px; font-size: 20px; font-weight: 750; font-stretch: 104%; }
+.schritt p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--text-2); }
+
+.karriere h2 { margin: 0; color: var(--putz); }
+.karriere__text { margin: 18px 0 0; max-width: 560px; font-size: 18px; line-height: 1.6; color: rgba(246, 240, 230, 0.75); }
+
+.kontakt h2 { margin: 0; }
+.kontakt__text { margin: 18px 0 0; max-width: 460px; font-size: 17px; line-height: 1.6; color: var(--text-2); }
+
+.fuss__text { margin: 18px 0 0; max-width: 300px; font-size: 15px; line-height: 1.6; }
