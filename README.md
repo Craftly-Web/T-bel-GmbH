@@ -42,3 +42,19 @@ läuft einmal). Doppelklick auf den Hero spielt sie erneut ab. Bei
 
 **Offen:** Originallogo als Vektordatei (das Logo ist nachgebaut),
 hochauflösende Fotos für Referenzen, echte Texte, Impressum und Datenschutz.
+
+## Anfrageformular
+
+`kontakt.html` und das Kurzformular der Startseite schicken an `/api/kontakt`
+(`api/kontakt.mjs`, Vercel-Funktion, Versand über Resend). Ohne JavaScript
+leitet die Funktion auf `danke.html` bzw. mit `?fehler=…` zurück, mit
+JavaScript bleibt man auf der Seite. Pflicht: Name, Telefon **oder** E-Mail,
+Nachricht, Datenschutz-Häkchen. Spamschutz über unsichtbares Feld und
+Mindestzeit, höchstens fünf Anfragen je Absender und Stunde.
+
+Damit etwas ankommt, bei Vercel (Production und Preview) setzen:
+
+- `RESEND_API_KEY` — Schlüssel aus dem Resend-Dashboard
+- `MAIL_TO` — z. B. `kontakt@bedachung-holzbau.de`
+- `MAIL_FROM` — Absender auf der bei Resend verifizierten Domain,
+  z. B. `formular@bedachung-holzbau.de` (Domain dafür per DNS bei Resend verifizieren)

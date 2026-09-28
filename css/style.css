@@ -1201,3 +1201,170 @@ button, input, textarea { font: inherit; color: inherit; }
   font-weight: 600;
   color: var(--text);
 }
+
+/* ==========================================================================
+   Kontaktseite
+   ========================================================================== */
+
+.schnellkontakt { display: grid; gap: 12px; }
+.schnellkontakt a,
+.schnellkontakt div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid rgba(246, 240, 230, 0.12);
+  border-radius: 6px;
+  background: rgba(246, 240, 230, 0.04);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.schnellkontakt a:hover { background: rgba(246, 240, 230, 0.09); border-color: rgba(246, 240, 230, 0.3); }
+.schnellkontakt svg { width: 24px; height: 24px; flex: none; color: var(--ziegel-hell); }
+.schnellkontakt small {
+  display: block;
+  font-size: 12px;
+  font-weight: 650;
+  font-stretch: 112%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(246, 240, 230, 0.55);
+}
+.schnellkontakt b { display: block; font-size: 19px; font-weight: 700; font-stretch: 102%; overflow-wrap: anywhere; }
+.schnellkontakt .gross b { font-size: clamp(24px, 2.6vw, 30px); font-weight: 800; }
+.schnellkontakt .gross { background: var(--ziegel); border-color: var(--ziegel); }
+.schnellkontakt .gross:hover { background: var(--ziegel-dunkel); border-color: var(--ziegel-dunkel); }
+.schnellkontakt .gross svg, .schnellkontakt .gross small { color: rgba(255, 255, 255, 0.85); }
+
+.kontakt-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+}
+@media (max-width: 960px) { .kontakt-raster { grid-template-columns: 1fr; } }
+
+.formular h2 { grid-column: 1 / -1; margin: 0; font-size: clamp(26px, 2.6vw, 32px); }
+.formular .hinweis { grid-column: 1 / -1; margin: -6px 0 6px; font-size: 15px; color: var(--text-2); }
+.feld label .pflicht { color: var(--ziegel); }
+.feld select { width: 100%; }
+
+.auswahl { grid-column: 1 / -1; border: 0; margin: 0; padding: 0; }
+.auswahl legend { margin-bottom: 10px; font-size: 14px; font-weight: 650; font-stretch: 104%; }
+.auswahl__liste { display: flex; flex-wrap: wrap; gap: 8px; }
+.auswahl label { position: relative; cursor: pointer; }
+.auswahl input { position: absolute; opacity: 0; pointer-events: none; }
+.auswahl span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid rgba(35, 36, 40, 0.2);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14.5px;
+  font-weight: 560;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.auswahl span::before {
+  content: "";
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(35, 36, 40, 0.35);
+  transition: inherit;
+}
+.auswahl label:hover span { border-color: var(--ziegel); }
+.auswahl input:checked + span { background: var(--ziegel); border-color: var(--ziegel); color: #fff; }
+.auswahl input:checked + span::before { border-color: #fff; background: #fff; box-shadow: inset 0 0 0 3px var(--ziegel); }
+.auswahl input:focus-visible + span { outline: 3px solid var(--ziegel); outline-offset: 2px; }
+
+.haken { grid-column: 1 / -1; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; cursor: pointer; }
+.haken input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: var(--ziegel); }
+.haken a { color: var(--ziegel-dunkel); text-decoration: underline; text-underline-offset: 2px; }
+
+.falle { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+
+.formular__status {
+  grid-column: 1 / -1;
+  padding: 14px 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(181, 65, 47, 0.35);
+  background: rgba(181, 65, 47, 0.08);
+  color: var(--ziegel-dunkel);
+  font-size: 15px;
+  font-weight: 560;
+}
+.formular__status ul { margin: 0; padding-left: 18px; }
+.formular__fuss { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
+.formular__fuss small { color: var(--text-2); font-size: 14px; }
+.formular .knopf[disabled] { opacity: 0.6; cursor: progress; }
+
+/* Seitenleiste */
+.seitenleiste { display: grid; gap: 16px; position: sticky; top: 100px; }
+@media (max-width: 960px) { .seitenleiste { position: static; } }
+.karte {
+  padding: 24px;
+  background: #fffaf2;
+  border: 1px solid var(--linie);
+  border-radius: 6px;
+}
+.karte h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.karte h3 svg { width: 18px; height: 18px; color: var(--ziegel); }
+.karte address { font-style: normal; font-size: 17px; line-height: 1.55; font-weight: 560; }
+.karte .knoepfe { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.karte .knopf { min-height: 42px; padding: 0 16px; font-size: 14.5px; }
+
+.person { display: flex; gap: 16px; align-items: center; }
+.person img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex: none; }
+.person b { display: block; font-size: 17px; }
+.person span { display: block; font-size: 14.5px; color: var(--text-2); line-height: 1.4; }
+
+.zeiten { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+.zeiten td { padding: 7px 0; border-bottom: 1px dashed var(--linie); }
+.zeiten td:last-child { text-align: right; font-weight: 600; }
+.zeiten tr:last-child td { border-bottom: 0; }
+
+/* Markierung für noch fehlende Angaben im Entwurf */
+.fehlt {
+  background: repeating-linear-gradient(-45deg, rgba(208, 99, 77, 0.12) 0 6px, rgba(208, 99, 77, 0.04) 6px 12px);
+  outline: 1px dashed rgba(181, 65, 47, 0.5);
+  border-radius: 3px;
+  padding: 0 4px;
+  color: var(--ziegel-dunkel);
+  font-weight: 600;
+}
+
+/* Anfahrt */
+.anfahrt { position: relative; margin: 0; }
+.anfahrt img {
+  width: 100%;
+  height: clamp(320px, 42vw, 560px);
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+.anfahrt__karte {
+  position: absolute;
+  left: max(var(--rand), calc((100% - var(--breite)) / 2));
+  bottom: clamp(20px, 4vw, 48px);
+  max-width: 380px;
+  padding: 26px 28px;
+  background: var(--schiefer);
+  color: var(--putz);
+  border-radius: 6px;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+}
+.anfahrt__karte h2 { margin: 0 0 10px; font-size: 24px; font-weight: 800; font-stretch: 96%; }
+.anfahrt__karte p { margin: 0 0 18px; color: rgba(246, 240, 230, 0.78); }
+@media (max-width: 640px) {
+  .anfahrt__karte { position: static; max-width: none; border-radius: 0; }
+}
