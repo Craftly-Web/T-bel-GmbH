@@ -1556,3 +1556,33 @@ button, input, textarea { font: inherit; color: inherit; }
   .lightbox__vor { right: calc(50% - 60px); }
 }
 .lightbox button[hidden] { display: none; }
+
+/* Über uns: Bild und Text auch auf Tablet und Handy nebeneinander */
+@media (min-width: 600px) and (max-width: 900px) {
+  .seitenkopf__innen--bild { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 32px; }
+  .seitenkopf__innen--bild .generationen-bild { justify-self: end; }
+  .heute { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+}
+@media (min-width: 600px) and (max-width: 860px) {
+  .generation { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 32px; }
+  .generation__karte { position: sticky; top: 100px; max-width: none; }
+  .chronik-raster { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 32px; }
+  .chronik-raster > div:first-child { position: sticky; top: 100px; }
+}
+@media (max-width: 599px) {
+  /* Porträt links, der Text fließt daneben und darunter weiter */
+  .generation { display: block; }
+  .generation::after { content: ""; display: block; clear: both; }
+  .generation__karte {
+    float: left;
+    width: 40%;
+    max-width: 180px;
+    margin: 4px 18px 10px 0;
+  }
+  .generation__name { margin-top: 10px; font-size: 16px; }
+  .generation__rolle { font-size: 13px; line-height: 1.35; }
+  .generation h2 { font-size: 26px; margin-bottom: 16px; }
+  .generation .fliesstext { font-size: 16.5px; }
+  .generation__nr { display: flex; margin-bottom: 10px; }
+  .generation__nr .augenbraue__text { font-size: 12px; letter-spacing: 0.1em; }
+}
