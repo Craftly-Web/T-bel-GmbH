@@ -39,7 +39,9 @@ jedem Bildschirm, wenige KB, Farben und Zeitplan `T` sowie `TEMPO` in
 Banner → Dachstuhl (Fußpfette, Sparren, Grat, First) →
 Unterspannbahn, Konterlatten, Dachlatten → Biberschwanz Reihe für Reihe →
 Grat- und Firstziegel → Rinne, Fallrohr, Verwahrung, Schneefang → Gerüst
-abbauen → Lichtkante (ca. 25 s, ruhiges Tempo, läuft einmal). Doppelklick auf den Hero spielt sie erneut ab. Bei
+abbauen → Lichtkante (ca. 25 s, ruhiges Tempo, läuft einmal). Ein Mitarbeiter
+in Tübel-Kleidung begleitet jeden Schritt, ein Schrägaufzug bringt die Ziegel,
+am Gerüst hängt das Firmenbanner mit Telefonnummer. Doppelklick auf den Hero spielt sie erneut ab. Bei
 „Bewegung reduzieren" im Betriebssystem steht sofort das fertige Dach da.
 
 **Offen:** Originallogo als Vektordatei (das Logo ist nachgebaut),

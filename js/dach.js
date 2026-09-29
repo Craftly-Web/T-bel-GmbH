@@ -3,7 +3,8 @@
  * Ablauf: Haus → Gerüst → Dachstuhl (Fußpfette, Sparren, Grat, First)
  *         → Unterspannbahn, Konterlatten, Dachlatten → Biberschwanz Reihe für Reihe
  *         → Grat- und Firstziegel → Klempner (Rinne, Fallrohr, Verwahrung, Schneefang)
- *         → Gerüst abbauen → Lichtkante.
+ *         → Gerüst abbauen → Lichtkante. Ein Mitarbeiter in Tübel-Kleidung
+ *         begleitet jeden Schritt, ein Schrägaufzug bringt die Ziegel hoch.
  * Gezeichnet auf <canvas> in einem festen Koordinatensystem (1000 × 640,
  * sichtbar ab y = 80),
  * das an .hero__buehne ausgerichtet wird. Bei „Bewegung reduzieren“ steht
@@ -882,31 +883,329 @@
       ctx.restore();
     }
 
-    // Banner mit Logo am Geländer der ersten Lage
-    var pbn = geruestP(t, b0 + 1.6 * G, 0.5 * G, 0.5 * G, 0.3 * G);
-    if (pbn > 0 && LOGO_SCHRIFT) {
-      var bx = 440, by = G_LAGEN[0] - 54, bb = 120, bh = 50;
+    ctx.restore();
+  }
+
+  /* ---------- Baustelle: Leiter, Schrägaufzug, Mitarbeiter ---------- */
+
+  var LEITER_X = 172;                 // Leitergang im ersten Gerüstfeld
+  var DECK = G_LAGEN[1];              // oberste Gerüstlage (Standfläche)
+
+  function zeichneLeiter(t) {
+    var p = geruestP(t, T.geruest + 1.0 * G, 0.5 * G, 0.4 * G, 0.3 * G);
+    if (p <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = klemm(p * 1.5);
+    var unten = BODEN - 2, oben = DECK - 34;
+    var yo = unten - (unten - oben) * p;
+    ctx.strokeStyle = "#b9c0c2";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(LEITER_X - 9, unten); ctx.lineTo(LEITER_X - 9, yo);
+    ctx.moveTo(LEITER_X + 9, unten); ctx.lineTo(LEITER_X + 9, yo);
+    ctx.stroke();
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    for (var y = unten - 10; y > yo; y -= 11) { ctx.moveTo(LEITER_X - 9, y); ctx.lineTo(LEITER_X + 9, y); }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Schrägaufzug bringt die Ziegel aufs Dach
+  var AUFZ_U = { x: 968, y: BODEN }, AUFZ_O = { x: 872, y: 360 };
+  function zeichneAufzug(t) {
+    var ein = ausCubic(fortschritt(t, T.ziegel - 1.2, 0.8));
+    var aus = ausCubic(fortschritt(t, T.abbau - 0.2, 0.6));
+    var a = ein * (1 - aus);
+    if (a <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = a;
+    var dx = AUFZ_O.x - AUFZ_U.x, dy = AUFZ_O.y - AUFZ_U.y;
+    var len = Math.sqrt(dx * dx + dy * dy), nx = -dy / len * 6, ny = dx / len * 6;
+    // Ziegelpalette am Boden
+    ctx.fillStyle = "#8a6a45";
+    ctx.fillRect(918, BODEN - 6, 40, 6);
+    var rest = 1 - fortschritt(t, T.ziegel, 5.8) * 0.8;
+    for (var r = 0; r < Math.round(5 * rest); r++) {
+      ctx.fillStyle = r % 2 ? "#a9432f" : "#b84d36";
+      ctx.fillRect(920, BODEN - 12 - r * 6, 36, 6);
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.fillRect(920, BODEN - 7 - r * 6, 36, 1);
+    }
+    // Schiene mit Sprossen
+    ctx.strokeStyle = "#c9cfd1";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(AUFZ_U.x + nx, AUFZ_U.y + ny); ctx.lineTo(AUFZ_O.x + nx, AUFZ_O.y + ny);
+    ctx.moveTo(AUFZ_U.x - nx, AUFZ_U.y - ny); ctx.lineTo(AUFZ_O.x - nx, AUFZ_O.y - ny);
+    ctx.stroke();
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    for (var f = 0.04; f < 1; f += 0.045) {
+      var px = AUFZ_U.x + dx * f, py = AUFZ_U.y + dy * f;
+      ctx.moveTo(px + nx, py + ny); ctx.lineTo(px - nx, py - ny);
+    }
+    ctx.stroke();
+    // Motor am Fuß
+    ctx.fillStyle = "#c0392b";
+    ctx.fillRect(AUFZ_U.x - 6, BODEN - 22, 20, 16);
+    ctx.fillStyle = "#2c2e31";
+    ctx.fillRect(AUFZ_U.x - 2, BODEN - 6, 5, 6);
+    // Schlitten: fährt voll hoch, leer herunter
+    var zyklus = 2.6, s = ((t - T.ziegel + 1.0) % zyklus + zyklus) % zyklus / zyklus;
+    var pos = s < 0.45 ? ausCubic(s / 0.45) : s < 0.6 ? 1 : 1 - ausCubic((s - 0.6) / 0.4);
+    var voll = s < 0.6;
+    if (t > T.first) { pos = 0; voll = false; }
+    var sx = AUFZ_U.x + dx * (0.08 + 0.9 * pos), sy = AUFZ_U.y + dy * (0.08 + 0.9 * pos);
+    ctx.save();
+    ctx.translate(sx, sy);
+    ctx.fillStyle = "#5c6366";
+    ctx.fillRect(-12, -3, 24, 4);
+    if (voll) {
+      for (var k = 0; k < 3; k++) {
+        ctx.fillStyle = k % 2 ? "#a9432f" : "#b84d36";
+        ctx.fillRect(-11, -9 - k * 5, 22, 5);
+      }
+    }
+    ctx.restore();
+    ctx.restore();
+  }
+
+  // Wo steht der Mitarbeiter gerade und was tut er?
+  function arbeiterZiel(t) {
+    var i;
+    if (t < 1.0) return null;
+    if (t < 2.8) return { x: 90 + 760 * ausCubic(fortschritt(t, 1.0, 1.8)), y: BODEN, modus: "gehen", werkzeug: "rohr" };
+    if (t < 4.0) return { x: 850 - (850 - LEITER_X) * ausCubic(fortschritt(t, 2.8, 1.2)), y: BODEN, modus: "gehen" };
+    if (t < 4.6) return { x: LEITER_X, y: BODEN - (BODEN - DECK) * fortschritt(t, 4.0, 0.6), modus: "klettern" };
+    if (t < T.gratbalken[0]) {
+      var sp = sparren[0];
+      for (i = 0; i < sparren.length; i++) if (sparren[i].start <= t) sp = sparren[i];
+      return { x: sp.x, y: DECK, modus: "haemmern", werkzeug: "hammer" };
+    }
+    if (t < T.bahn) return { x: 500, y: DECK, modus: "haemmern", werkzeug: "hammer" };
+    var u = TRAUFE + UEBERSTAND;
+    if (t < T.konter[0]) {
+      var b = Math.max(0, Math.floor((t - T.bahn) / T.bahnAbstand));
+      var bp = fortschritt(t, T.bahn + b * T.bahnAbstand, T.bahnDauer);
+      var yb = Math.min(DECK, u - b * 46 + 6);
+      return { x: TRAUFE_L + 40 + (TRAUFE_R - TRAUFE_L - 80) * bp, y: yb, modus: "gehen", werkzeug: "rolle" };
+    }
+    if (t < T.ziegel) {
+      var rw = reihen[0];
+      for (i = 0; i < reihen.length; i++) if (reihen[i].start <= t) rw = reihen[i];
+      var rp = fortschritt(t, rw.start, T.lattenDauer);
+      return { x: rw.l + 20 + (rw.r - rw.l - 40) * rp, y: Math.min(DECK, rw.y + 24), modus: "haemmern", werkzeug: "hammer" };
+    }
+    if (t < T.grat) {
+      var z = ziegel[0];
+      for (i = 0; i < ziegel.length; i++) if (ziegel[i].start <= t) z = ziegel[i];
+      return { x: z.x + ZIEGEL_B / 2, y: Math.min(DECK, z.y + ZIEGEL_H + 18), modus: "legen", werkzeug: "ziegel" };
+    }
+    if (t < T.rinne[0]) {
+      var kp = kappen[0];
+      for (i = 0; i < kappen.length; i++) if (kappen[i].start <= t) kp = kappen[i];
+      return { x: kp.x, y: Math.min(DECK, kp.y + 34), modus: "legen", werkzeug: "ziegel" };
+    }
+    if (t < T.abbau - 0.3) return { x: TRAUFE_L + 40 + (TRAUFE_R - TRAUFE_L - 80) * fortschritt(t, T.rinne[0], T.rinne[1] + 0.6), y: DECK, modus: "haemmern", werkzeug: "hammer" };
+    if (t < T.abbau + 0.4) return { x: LEITER_X, y: DECK, modus: "gehen" };
+    if (t < T.abbau + 1.0) return { x: LEITER_X, y: DECK + (BODEN - DECK) * fortschritt(t, T.abbau + 0.4, 0.6), modus: "klettern" };
+    return { x: LEITER_X + (590 - LEITER_X) * ausCubic(fortschritt(t, T.abbau + 1.0, 1.6)), y: BODEN, modus: t < T.abbau + 2.6 ? "gehen" : "stehen" };
+  }
+
+  // Weich nachgeführt: Mittel über die letzten Zielpunkte, damit er geht statt springt
+  function arbeiterPos(t) {
+    var jetzt = arbeiterZiel(t);
+    if (!jetzt) return null;
+    var sx = 0, sy = 0, n = 0;
+    for (var k = 0; k < 8; k++) {
+      var z = arbeiterZiel(t - k * 0.06);
+      if (!z) continue;
+      sx += z.x; sy += z.y; n++;
+    }
+    return { x: sx / n, y: sy / n, modus: jetzt.modus, werkzeug: jetzt.werkzeug };
+  }
+
+  function zeichneArbeiter(t) {
+    var a = arbeiterPos(t);
+    if (!a) return;
+    var vorher = arbeiterPos(t - 0.05) || a;
+    var tempo = Math.abs(a.x - vorher.x) + Math.abs(a.y - vorher.y);
+    var bewegt = tempo > 0.4;
+    var phase = (a.x + a.y) * 0.16;
+    var schritt = bewegt ? Math.sin(phase) : 0;
+    var ein = klemm((t - 1.0) / 0.4);
+
+    ctx.save();
+    ctx.globalAlpha = ein;
+    ctx.translate(a.x, a.y);
+    var H = 1;                            // Figur ca. 98 Einheiten hoch
+
+    // Schatten
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.beginPath(); ctx.ellipse(0, 1, 17, 3, 0, 0, 6.283); ctx.fill();
+
+    var klettern = a.modus === "klettern";
+    var hebL = klettern ? Math.max(0, Math.sin(a.y * 0.3)) * 8 : Math.max(0, schritt) * 5;
+    var hebR = klettern ? Math.max(0, -Math.sin(a.y * 0.3)) * 8 : Math.max(0, -schritt) * 5;
+
+    // Beine: Arbeitshose anthrazit mit roten Kniepolster-Taschen
+    function bein(x, heb) {
+      ctx.fillStyle = "#2f3136";
+      ctx.fillRect(x - 6, -48, 12, 42 - heb);
+      ctx.fillStyle = "#b5412f";
+      ctx.fillRect(x - 6, -28 - heb * 0.5, 12, 3);
+      ctx.fillStyle = "#1b1c1e";               // Arbeitsschuh
+      ctx.fillRect(x - 7, -8 - heb, 14, 8);
+      ctx.fillStyle = "#4a4c50";
+      ctx.fillRect(x - 7, -1.5 - heb, 14, 1.5);
+    }
+    bein(-7, hebL);
+    bein(7, hebR);
+
+    // Werkzeuggürtel
+    ctx.fillStyle = "#3b2c20";
+    ctx.fillRect(-17, -50, 34, 5);
+    ctx.fillStyle = "#6b4e33";
+    ctx.fillRect(9, -48, 8, 9);
+
+    // Oberteil: weißes Poloshirt, Rücken zum Betrachter
+    var g = ctx.createLinearGradient(-17, 0, 17, 0);
+    g.addColorStop(0, "#e2ded6");
+    g.addColorStop(0.4, "#fbf9f4");
+    g.addColorStop(1, "#d6d1c7");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(-17, -48); ctx.lineTo(17, -48); ctx.lineTo(18, -76);
+    ctx.quadraticCurveTo(17, -82, 10, -83); ctx.lineTo(-10, -83);
+    ctx.quadraticCurveTo(-17, -82, -18, -76);
+    ctx.closePath(); ctx.fill();
+    // Kragen
+    ctx.fillStyle = "#e9e5dd";
+    ctx.fillRect(-7, -85, 14, 4);
+    // Tübel-Logo auf dem Rücken
+    if (LOGO_SCHRIFT) {
       ctx.save();
-      ctx.beginPath();
-      ctx.rect(bx, by, bb, bh * pbn);
-      ctx.clip();
-      ctx.fillStyle = "#f6f0e6";
-      ctx.fillRect(bx, by, bb, bh);
-      ctx.fillStyle = "rgba(0,0,0,0.1)";
-      ctx.fillRect(bx, by + bh - 3, bb, 3);
-      ctx.translate(bx + 17, by + 5);
-      var sc = 86 / 1135;
-      ctx.scale(sc, sc);
+      ctx.translate(-12, -76);
+      ctx.scale(24 / 1135, 24 / 1135);
       ctx.translate(-55, -45);
       ctx.fillStyle = "#3d3e43";
       ctx.fill(LOGO_SCHRIFT, "evenodd");
       ctx.fillStyle = "#b5412f";
       ctx.fill(LOGO_DACH);
       ctx.restore();
-      // Befestigung
-      ctx.fillStyle = "#3a3d40";
-      [bx + 6, bx + bb - 8].forEach(function (x) { ctx.fillRect(x, by - 2, 3, 5); });
     }
+
+    // Arme
+    function arm(seite, winkel, werkzeug) {
+      ctx.save();
+      ctx.translate(seite * 16, -78);
+      ctx.rotate(-winkel * seite);
+      ctx.fillStyle = "#f3f0ea";                // Ärmel
+      ctx.fillRect(-4.5, 0, 9, 11);
+      ctx.fillStyle = "#d9a585";                // Unterarm
+      ctx.fillRect(-3.5, 10, 7, 17);
+      ctx.fillStyle = "#b5412f";                // Arbeitshandschuh
+      ctx.fillRect(-4, 26, 8, 7);
+      if (werkzeug === "hammer") {
+        ctx.fillStyle = "#7a5a3a";
+        ctx.fillRect(-1.5, 30, 3, 14);
+        ctx.fillStyle = "#3a3d40";
+        ctx.fillRect(-6, 42, 12, 5);
+      } else if (werkzeug === "ziegel") {
+        ctx.fillStyle = "#b84d36";
+        ctx.fillRect(-7, 31, 14, 18);
+        ctx.fillStyle = "rgba(0,0,0,0.2)";
+        ctx.fillRect(-7, 45, 14, 4);
+      }
+      ctx.restore();
+    }
+    var links = 0.12, rechts = 0.12, wz = null;
+    if (a.modus === "gehen") { links = 0.12 + schritt * 0.25; rechts = 0.12 - schritt * 0.25; }
+    if (a.modus === "klettern") { links = 2.8 + Math.sin(a.y * 0.3) * 0.25; rechts = 2.8 - Math.sin(a.y * 0.3) * 0.25; }
+    if (a.modus === "haemmern") { rechts = 2.3 + Math.sin(t * 11) * 0.5; wz = "hammer"; links = 0.35; }
+    if (a.modus === "legen") { var r = (Math.sin(t * 5) + 1) / 2; rechts = 2.2 + r * 0.75; links = 0.3 + r * 0.25; wz = "ziegel"; }
+    if (a.modus === "stehen") { links = 0.1; rechts = 0.1; }
+    arm(-1, links, null);
+    arm(1, rechts, wz);
+
+    // Mitgetragenes: Gerüstrohr auf der Schulter oder Bahnenrolle
+    if (a.werkzeug === "rohr") {
+      ctx.fillStyle = "#a7afb1";
+      ctx.save(); ctx.rotate(-0.08);
+      ctx.fillRect(-46, -86, 92, 4);
+      ctx.restore();
+    }
+    if (a.werkzeug === "rolle") {
+      ctx.fillStyle = "#9fb0b9";
+      ctx.fillRect(-26, -34, 52, 12);
+      ctx.fillStyle = "rgba(255,255,255,0.35)";
+      ctx.fillRect(-26, -34, 52, 3);
+    }
+
+    // Kopf: Nacken, kurze Haare, weißer Schutzhelm
+    ctx.fillStyle = "#d9a585";
+    ctx.fillRect(-4, -89, 8, 6);
+    ctx.fillStyle = "#4a3426";
+    ctx.beginPath(); ctx.ellipse(0, -96, 9, 10, 0, 0, 6.283); ctx.fill();
+    ctx.fillStyle = "#d9a585";
+    ctx.beginPath(); ctx.ellipse(-9, -95, 2, 3, 0, 0, 6.283); ctx.ellipse(9, -95, 2, 3, 0, 0, 6.283); ctx.fill();
+    ctx.fillStyle = "#f4f2ee";
+    ctx.beginPath();
+    ctx.ellipse(0, -101, 11, 8, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.fillRect(-13, -102, 26, 3);
+    ctx.fillStyle = "#b5412f";
+    ctx.fillRect(-2, -109, 4, 8);
+
+    ctx.restore();
+  }
+
+  function zeichneBanner(t) {
+    var pbn = geruestP(t, T.geruest + 1.6 * G, 0.5 * G, 0.5 * G, 0.3 * G);
+    if (pbn <= 0 || !LOGO_SCHRIFT) return;
+    var bx = 392, by = G_LAGEN[0] - 58, bb = 216, bh = 58;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(bx - 2, by - 4, bb + 4, bh * pbn + 6);
+    ctx.clip();
+    // Plane mit leichtem Schatten und Ösen
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(bx + 2, by + 3, bb, bh);
+    ctx.fillStyle = "#f6f0e6";
+    ctx.fillRect(bx, by, bb, bh);
+    ctx.fillStyle = "#b5412f";
+    ctx.fillRect(bx, by + bh - 6, bb, 6);
+    // Logo vollständig
+    ctx.save();
+    var sc = 40 / 685;
+    ctx.translate(bx + 8, by + 6);
+    ctx.scale(sc, sc);
+    ctx.translate(-55, -45);
+    ctx.fillStyle = "#3d3e43";
+    ctx.fill(LOGO_SCHRIFT, "evenodd");
+    ctx.fillStyle = "#b5412f";
+    ctx.fill(LOGO_DACH);
+    ctx.restore();
+    // Schrift
+    // Schrift passend zur Bannerbreite setzen
+    function passend(text, gewicht, groesse, x, y, farbe) {
+      var frei = bx + bb - 8 - x;
+      ctx.font = gewicht + " " + groesse + "px Archivo, sans-serif";
+      var w = ctx.measureText(text).width;
+      if (w > frei) ctx.font = gewicht + " " + (groesse * frei / w).toFixed(2) + "px Archivo, sans-serif";
+      ctx.fillStyle = farbe;
+      ctx.fillText(text, x, y);
+    }
+    ctx.textBaseline = "alphabetic";
+    passend("Dachdecker- & Zimmermeister", 700, 10.5, bx + 80, by + 21, "#3d3e43");
+    passend("03594 702207", 800, 15, bx + 80, by + 41, "#b5412f");
+    // Ösen
+    ctx.fillStyle = "#8b9295";
+    [6, bb / 2, bb - 6].forEach(function (x) {
+      ctx.beginPath(); ctx.arc(bx + x, by + 4, 2, 0, 6.283); ctx.fill();
+      ctx.beginPath(); ctx.arc(bx + x, by + bh - 9, 2, 0, 6.283); ctx.fill();
+    });
     ctx.restore();
   }
 
@@ -942,7 +1241,11 @@
     zeichneSchornstein(t, "oben");
     zeichneRinne(t);
     zeichneBuesche(t);
+    zeichneAufzug(t);
     zeichneGeruest(t);
+    zeichneLeiter(t);
+    zeichneBanner(t);
+    zeichneArbeiter(t);
     zeichneLicht(t);
   }
 
