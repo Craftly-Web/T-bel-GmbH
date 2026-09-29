@@ -34,10 +34,12 @@ fonts/            Schriftdateien (woff2)
 ```
 
 **Hero-Animation.** Canvas-Zeichnung statt Videodatei: gestochen scharf auf
-jedem Bildschirm, wenige KB, Farben und Tempo im Zeitplan `T` in
-`js/dach.js` einstellbar. Ablauf: Haus → Dachstuhl und Lattung → Ziegel
-Reihe für Reihe → Grat- und Firstziegel → Schornstein → Lichtkante (ca. 8 s,
-läuft einmal). Doppelklick auf den Hero spielt sie erneut ab. Bei
+jedem Bildschirm, wenige KB, Farben und Zeitplan `T` sowie `TEMPO` in
+`js/dach.js` einstellbar. Ablauf wie auf der Baustelle: Haus → Gerüst mit
+Banner → Dachstuhl (Fußpfette, Sparren, Grat, First, Richtbaum) →
+Unterspannbahn, Konterlatten, Dachlatten → Biberschwanz Reihe für Reihe →
+Grat- und Firstziegel → Rinne, Fallrohr, Verwahrung, Schneefang → Gerüst
+abbauen → Lichtkante (ca. 13 s, läuft einmal). Doppelklick auf den Hero spielt sie erneut ab. Bei
 „Bewegung reduzieren" im Betriebssystem steht sofort das fertige Dach da.
 
 **Offen:** Originallogo als Vektordatei (das Logo ist nachgebaut),
