@@ -76,9 +76,9 @@
     ziegel: 13.2, reihenAbstand: 0.3, spaltenAbstand: 0.028, ziegelDauer: 0.7,
     grat: 19.0, gratAbstand: 0.08, kappeDauer: 0.45,
     first: 19.8, firstAbstand: 0.07,
-    rinne: [21.0, 0.8], fallrohr: [21.6, 0.7], verwahrung: [21.3, 0.5], schneefang: [21.8, 0.7],
-    abbau: 22.8,
-    licht: [25.0, 1.6]
+    rinne: [22.2, 0.8], fallrohr: [22.8, 0.7], verwahrung: [22.5, 0.5], schneefang: [23.0, 0.7],
+    abbau: 25.0,
+    licht: [27.6, 1.6]
   };
 
   /* ---------- Bauteile vorberechnen ---------- */
@@ -971,69 +971,85 @@
     ctx.restore();
   }
 
-  // Wo steht der Mitarbeiter gerade und was tut er?
-  function arbeiterZiel(t) {
-    var i;
-    if (t < 1.0) return null;
-    if (t < 2.8) return { x: 90 + 760 * ausCubic(fortschritt(t, 1.0, 1.8)), y: BODEN, modus: "gehen", werkzeug: "rohr" };
-    if (t < 4.0) return { x: 850 - (850 - LEITER_X) * ausCubic(fortschritt(t, 2.8, 1.2)), y: BODEN, modus: "gehen" };
-    if (t < 4.6) return { x: LEITER_X, y: BODEN - (BODEN - DECK) * fortschritt(t, 4.0, 0.6), modus: "klettern" };
-    if (t < T.gratbalken[0]) {
-      var sp = sparren[0];
-      for (i = 0; i < sparren.length; i++) if (sparren[i].start <= t) sp = sparren[i];
-      return { x: sp.x, y: DECK, modus: "haemmern", werkzeug: "hammer" };
+  // Laufweg des Mitarbeiters als feste Stationen: Er geht ruhig von Station zu
+  // Station, bleibt stehen und arbeitet. "modus" gilt für den Abschnitt, der an
+  // der Station beginnt (Armhaltung); die Beine bewegen sich nur, wenn er läuft.
+  var B = BODEN, D = G_LAGEN[1];
+  var WEG = [
+    { t: 1.0,  x: 40,  y: B, modus: "gehen",    werkzeug: "rohr" },
+    { t: 2.6,  x: 230, y: B, modus: "stehen",   werkzeug: "rohr" },
+    { t: 3.0,  x: 230, y: B, modus: "gehen" },
+    { t: 3.6,  x: 172, y: B, modus: "klettern" },
+    { t: 5.0,  x: 172, y: D, modus: "gehen" },
+    { t: 5.9,  x: 290, y: D, modus: "haemmern", werkzeug: "hammer" },
+    { t: 6.5,  x: 290, y: D, modus: "gehen" },
+    { t: 7.4,  x: 420, y: D, modus: "haemmern", werkzeug: "hammer" },
+    { t: 8.6,  x: 420, y: D, modus: "gehen" },
+    { t: 9.6,  x: 560, y: D, modus: "haemmern", werkzeug: "hammer" },
+    { t: 11.0, x: 560, y: D, modus: "gehen" },
+    { t: 12.3, x: 380, y: D, modus: "haemmern", werkzeug: "hammer" },
+    { t: 13.2, x: 380, y: D, modus: "legen",    werkzeug: "ziegel" },
+    { t: 14.6, x: 330, y: 350, modus: "legen",  werkzeug: "ziegel" },
+    { t: 16.0, x: 420, y: 285, modus: "legen",  werkzeug: "ziegel" },
+    { t: 17.4, x: 360, y: 222, modus: "legen",  werkzeug: "ziegel" },
+    { t: 18.6, x: 470, y: 180, modus: "legen",  werkzeug: "ziegel" },
+    { t: 20.9, x: 420, y: 178, modus: "gehen" },
+    { t: 22.6, x: 300, y: D, modus: "haemmern", werkzeug: "hammer" },
+    { t: 23.4, x: 300, y: D, modus: "gehen" },
+    { t: 24.3, x: 172, y: D, modus: "klettern" },
+    { t: 25.6, x: 172, y: B, modus: "gehen" },
+    { t: 28.2, x: 560, y: B, modus: "stehen" }
+  ];
+  // Wegstrecke bis zu jeder Station, damit die Schritte zur Strecke passen
+  (function () {
+    var s = 0;
+    WEG[0].strecke = 0;
+    for (var i = 1; i < WEG.length; i++) {
+      s += Math.hypot(WEG[i].x - WEG[i - 1].x, WEG[i].y - WEG[i - 1].y);
+      WEG[i].strecke = s;
     }
-    if (t < T.bahn) return { x: 500, y: DECK, modus: "haemmern", werkzeug: "hammer" };
-    var u = TRAUFE + UEBERSTAND;
-    if (t < T.konter[0]) {
-      var b = Math.max(0, Math.floor((t - T.bahn) / T.bahnAbstand));
-      var bp = fortschritt(t, T.bahn + b * T.bahnAbstand, T.bahnDauer);
-      var yb = Math.min(DECK, u - b * 46 + 6);
-      return { x: TRAUFE_L + 40 + (TRAUFE_R - TRAUFE_L - 80) * bp, y: yb, modus: "gehen", werkzeug: "rolle" };
-    }
-    if (t < T.ziegel) {
-      var rw = reihen[0];
-      for (i = 0; i < reihen.length; i++) if (reihen[i].start <= t) rw = reihen[i];
-      var rp = fortschritt(t, rw.start, T.lattenDauer);
-      return { x: rw.l + 20 + (rw.r - rw.l - 40) * rp, y: Math.min(DECK, rw.y + 24), modus: "haemmern", werkzeug: "hammer" };
-    }
-    if (t < T.grat) {
-      var z = ziegel[0];
-      for (i = 0; i < ziegel.length; i++) if (ziegel[i].start <= t) z = ziegel[i];
-      return { x: z.x + ZIEGEL_B / 2, y: Math.min(DECK, z.y + ZIEGEL_H + 18), modus: "legen", werkzeug: "ziegel" };
-    }
-    if (t < T.rinne[0]) {
-      var kp = kappen[0];
-      for (i = 0; i < kappen.length; i++) if (kappen[i].start <= t) kp = kappen[i];
-      return { x: kp.x, y: Math.min(DECK, kp.y + 34), modus: "legen", werkzeug: "ziegel" };
-    }
-    if (t < T.abbau - 0.3) return { x: TRAUFE_L + 40 + (TRAUFE_R - TRAUFE_L - 80) * fortschritt(t, T.rinne[0], T.rinne[1] + 0.6), y: DECK, modus: "haemmern", werkzeug: "hammer" };
-    if (t < T.abbau + 0.4) return { x: LEITER_X, y: DECK, modus: "gehen" };
-    if (t < T.abbau + 1.0) return { x: LEITER_X, y: DECK + (BODEN - DECK) * fortschritt(t, T.abbau + 0.4, 0.6), modus: "klettern" };
-    return { x: LEITER_X + (590 - LEITER_X) * ausCubic(fortschritt(t, T.abbau + 1.0, 1.6)), y: BODEN, modus: t < T.abbau + 2.6 ? "gehen" : "stehen" };
+  })();
+
+  function weich(p) { return p * p * (3 - 2 * p); }
+
+  function arbeiterPos(t) {
+    if (t < WEG[0].t) return null;
+    var i = 0;
+    while (i < WEG.length - 1 && WEG[i + 1].t <= t) i++;
+    var a = WEG[i], b = WEG[Math.min(i + 1, WEG.length - 1)];
+    var dauer = b.t - a.t;
+    var p = dauer > 0 ? klemm((t - a.t) / dauer) : 1;
+    var e = weich(p);
+    var laenge = b.strecke - a.strecke;
+    // Geschwindigkeit (Einheiten/s) aus der Ableitung von weich()
+    var tempo = dauer > 0 ? laenge * 6 * p * (1 - p) / dauer : 0;
+    return {
+      x: a.x + (b.x - a.x) * e,
+      y: a.y + (b.y - a.y) * e,
+      strecke: a.strecke + laenge * e,
+      tempo: tempo,
+      modus: a.modus,
+      vorher: i > 0 ? WEG[i - 1].modus : a.modus,
+      seit: t - a.t,
+      werkzeug: a.werkzeug
+    };
   }
 
-  // Weich nachgeführt: Mittel über die letzten Zielpunkte, damit er geht statt springt
-  function arbeiterPos(t) {
-    var jetzt = arbeiterZiel(t);
-    if (!jetzt) return null;
-    var sx = 0, sy = 0, n = 0;
-    for (var k = 0; k < 8; k++) {
-      var z = arbeiterZiel(t - k * 0.06);
-      if (!z) continue;
-      sx += z.x; sy += z.y; n++;
-    }
-    return { x: sx / n, y: sy / n, modus: jetzt.modus, werkzeug: jetzt.werkzeug };
+  // Armwinkel je Tätigkeit
+  function armWinkel(modus, t, a, schritt) {
+    if (modus === "gehen") return [0.12 + schritt * 0.25, 0.12 - schritt * 0.25];
+    if (modus === "klettern") { var k = Math.sin(a.strecke * 0.09); return [2.8 + k * 0.25, 2.8 - k * 0.25]; }
+    if (modus === "haemmern") return [0.35, 2.3 + Math.sin(t * 9) * 0.45];
+    if (modus === "legen") { var r = (Math.sin(t * 4) + 1) / 2; return [0.3 + r * 0.25, 2.2 + r * 0.75]; }
+    return [0.1, 0.1];
   }
 
   function zeichneArbeiter(t) {
     var a = arbeiterPos(t);
     if (!a) return;
-    var vorher = arbeiterPos(t - 0.05) || a;
-    var tempo = Math.abs(a.x - vorher.x) + Math.abs(a.y - vorher.y);
-    var bewegt = tempo > 0.4;
-    var phase = (a.x + a.y) * 0.16;
-    var schritt = bewegt ? Math.sin(phase) : 0;
+    // Schrittweite wächst mit dem Tempo, damit Anlaufen und Anhalten weich sind
+    var staerke = klemm(a.tempo / 60);
+    var schritt = Math.sin(a.strecke * 0.11) * staerke;
     var ein = klemm((t - 1.0) / 0.4);
 
     ctx.save();
@@ -1046,8 +1062,9 @@
     ctx.beginPath(); ctx.ellipse(0, 1, 17, 3, 0, 0, 6.283); ctx.fill();
 
     var klettern = a.modus === "klettern";
-    var hebL = klettern ? Math.max(0, Math.sin(a.y * 0.3)) * 8 : Math.max(0, schritt) * 5;
-    var hebR = klettern ? Math.max(0, -Math.sin(a.y * 0.3)) * 8 : Math.max(0, -schritt) * 5;
+    var kl = Math.sin(a.strecke * 0.09) * staerke;
+    var hebL = klettern ? Math.max(0, kl) * 8 : Math.max(0, schritt) * 5;
+    var hebR = klettern ? Math.max(0, -kl) * 8 : Math.max(0, -schritt) * 5;
 
     // Beine: Arbeitshose anthrazit mit roten Kniepolster-Taschen
     function bein(x, heb) {
@@ -1120,12 +1137,13 @@
       }
       ctx.restore();
     }
-    var links = 0.12, rechts = 0.12, wz = null;
-    if (a.modus === "gehen") { links = 0.12 + schritt * 0.25; rechts = 0.12 - schritt * 0.25; }
-    if (a.modus === "klettern") { links = 2.8 + Math.sin(a.y * 0.3) * 0.25; rechts = 2.8 - Math.sin(a.y * 0.3) * 0.25; }
-    if (a.modus === "haemmern") { rechts = 2.3 + Math.sin(t * 11) * 0.5; wz = "hammer"; links = 0.35; }
-    if (a.modus === "legen") { var r = (Math.sin(t * 5) + 1) / 2; rechts = 2.2 + r * 0.75; links = 0.3 + r * 0.25; wz = "ziegel"; }
-    if (a.modus === "stehen") { links = 0.1; rechts = 0.1; }
+    // Armhaltung weich von der vorigen Tätigkeit überblenden
+    var jetzt = armWinkel(a.modus, t, a, schritt);
+    var mix = weich(klemm(a.seit / 0.5));
+    var alt = armWinkel(a.vorher, t, a, schritt);
+    var links = alt[0] + (jetzt[0] - alt[0]) * mix;
+    var rechts = alt[1] + (jetzt[1] - alt[1]) * mix;
+    var wz = a.modus === "haemmern" ? "hammer" : a.modus === "legen" ? "ziegel" : null;
     arm(-1, links, null);
     arm(1, rechts, wz);
 
