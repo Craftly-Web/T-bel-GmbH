@@ -1,6 +1,6 @@
 /*
  * Hero-Animation: Ein Dach entsteht – wie auf der Baustelle.
- * Ablauf: Haus → Gerüst → Dachstuhl (Fußpfette, Sparren, Grat, First, Richtbaum)
+ * Ablauf: Haus → Gerüst → Dachstuhl (Fußpfette, Sparren, Grat, First)
  *         → Unterspannbahn, Konterlatten, Dachlatten → Biberschwanz Reihe für Reihe
  *         → Grat- und Firstziegel → Klempner (Rinne, Fallrohr, Verwahrung, Schneefang)
  *         → Gerüst abbauen → Lichtkante.
@@ -60,24 +60,24 @@
 
   /* ---------- Zeitplan ---------- */
 
-  var TEMPO = 1.15;          // > 1 spielt schneller ab
+  var TEMPO = 1;             // > 1 spielt schneller ab
+  var G = 1.7;               // Dehnung der Gerüst-Schritte
   var T = {
-    haus: [0, 0.8],
-    schornstein: [0.4, 0.8],
-    geruest: 0.8,            // Ständer, danach Riegel, Beläge, Diagonalen, Netz, Banner
-    pfette: [2.9, 0.5],
-    sparren: 3.1, sparrenDauer: 0.5, sparrenAbstand: 0.07,
-    gratbalken: [4.4, 0.7],
-    richtbaum: [4.9, 0.5, 6.1, 0.5],
-    bahn: 5.3, bahnDauer: 0.55, bahnAbstand: 0.22,
-    konter: [6.4, 0.5],
-    latten: 6.8, lattenDauer: 0.4, lattenAbstand: 0.04,
-    ziegel: 7.5, reihenAbstand: 0.16, spaltenAbstand: 0.012, ziegelDauer: 0.5,
-    grat: 10.5, gratAbstand: 0.05, kappeDauer: 0.35,
-    first: 11.0, firstAbstand: 0.045,
-    rinne: [11.4, 0.6], fallrohr: [11.8, 0.5], verwahrung: [11.6, 0.4], schneefang: [11.9, 0.5],
-    abbau: 12.6,
-    licht: [14.1, 1.4]
+    haus: [0, 1.0],
+    schornstein: [0.5, 1.0],
+    geruest: 1.2,            // Ständer, danach Riegel, Beläge, Diagonalen, Netz, Banner
+    pfette: [4.2, 0.7],
+    sparren: 4.6, sparrenDauer: 0.7, sparrenAbstand: 0.14,
+    gratbalken: [7.2, 1.0],
+    bahn: 8.3, bahnDauer: 0.8, bahnAbstand: 0.45,
+    konter: [11.0, 0.8],
+    latten: 11.6, lattenDauer: 0.6, lattenAbstand: 0.07,
+    ziegel: 13.2, reihenAbstand: 0.3, spaltenAbstand: 0.028, ziegelDauer: 0.7,
+    grat: 19.0, gratAbstand: 0.08, kappeDauer: 0.45,
+    first: 19.8, firstAbstand: 0.07,
+    rinne: [21.0, 0.8], fallrohr: [21.6, 0.7], verwahrung: [21.3, 0.5], schneefang: [21.8, 0.7],
+    abbau: 22.8,
+    licht: [25.0, 1.6]
   };
 
   /* ---------- Bauteile vorberechnen ---------- */
@@ -111,7 +111,7 @@
           y: unten - ZIEGEL_H,
           reihe: r,
           sorte: zufall() < 0.12 ? 8 + Math.floor(zufall() * 2) : Math.floor(zufall() * 8),
-          dreh: (zufall() - 0.5) * 0.5,
+          dreh: (zufall() - 0.5) * 0.22,
           start: T.ziegel + r * T.reihenAbstand + spalte * T.spaltenAbstand + zufall() * 0.04
         });
         spalte++;
@@ -519,7 +519,7 @@
       var e = ausCubic(p);
       ctx.save();
       ctx.globalAlpha = klemm(p * 2.5);
-      ctx.translate(0, -(1 - e) * 70);
+      ctx.translate(0, -(1 - e) * 45);
       ctx.fillStyle = holzFarbe(s.x - 4, s.x + 4, false);
       ctx.fillRect(s.x - 4, s.oben - 10, 8, u - s.oben + 10);
       ctx.fillStyle = "rgba(0,0,0,0.28)";
@@ -598,38 +598,10 @@
     }
   }
 
-  function zeichneRichtbaum(t) {
-    var auf = ausZurueck(fortschritt(t, T.richtbaum[0], T.richtbaum[1]));
-    var ab = fortschritt(t, T.richtbaum[2], T.richtbaum[3]);
-    if (auf <= 0 || ab >= 1) return;
-    ctx.save();
-    ctx.globalAlpha = 1 - ab;
-    ctx.translate(500, FIRST - 2);
-    ctx.scale(auf, auf);
-    ctx.fillStyle = "#ece6da";
-    ctx.fillRect(-1.5, -62, 3, 62);
-    [[0, -58, 14, 11], [-9, -46, 12, 10], [9, -44, 12, 10], [0, -34, 11, 9]].forEach(function (k) {
-      ctx.fillStyle = "#7fa35a";
-      ctx.beginPath(); ctx.ellipse(k[0], k[1], k[2], k[3], 0, 0, 6.283); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,0.12)";
-      ctx.beginPath(); ctx.ellipse(k[0] - 3, k[1] - 3, k[2] * 0.5, k[3] * 0.4, 0, 0, 6.283); ctx.fill();
-    });
-    // Bänder
-    [["#c9453a", -6], ["#f2d04b", 0], ["#3f7fc0", 6]].forEach(function (b, i) {
-      ctx.strokeStyle = b[0];
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(b[1], -28);
-      ctx.quadraticCurveTo(b[1] + 8, -18 + i * 2, b[1] + 3 + i * 3, -8 + i * 3);
-      ctx.stroke();
-    });
-    ctx.restore();
-  }
-
   function zeichneMasse(t) {
     // Bemaßung wie auf dem Plan, blendet nach dem Eindecken ab
-    var ein = ausCubic(fortschritt(t, 2.8, 0.8));
-    var aus = fortschritt(t, 10.2, 1.2);
+    var ein = ausCubic(fortschritt(t, 4.0, 1.0));
+    var aus = fortschritt(t, 18.5, 1.5);
     var a = ein * (1 - aus * 0.8);
     if (a <= 0) return;
     ctx.save();
@@ -726,10 +698,10 @@
       var e = ausCubic(p);
       var cx = z.x + ZIEGEL_B / 2, cy = z.y + ZIEGEL_H * 0.75;
       ctx.save();
-      ctx.globalAlpha = klemm(p * 3);
-      ctx.translate(cx, cy - (1 - e) * 34);
+      ctx.globalAlpha = klemm(p * 2);
+      ctx.translate(cx, cy - (1 - e) * 18);
       ctx.rotate(z.dreh * (1 - e));
-      var sc = 1 + (1 - ausZurueck(p)) * 0.12;
+      var sc = 1 + (1 - ausCubic(p)) * 0.06;
       ctx.scale(sc, sc);
       ctx.drawImage(v, -ZIEGEL_B / 2 - RAND, -ZIEGEL_H * 0.75 - RAND, bw, bh);
       ctx.restore();
@@ -844,7 +816,7 @@
 
     // Fußplatten und Ständer wachsen aus dem Boden
     G_X.forEach(function (x, i) {
-      var p = geruestP(t, b0 + i * 0.07, 0.45, 1.0 - i * 0.05, 0.4);
+      var p = geruestP(t, b0 + i * 0.07 * G, 0.45 * G, (1.0 - i * 0.05) * G, 0.4 * G);
       if (p <= 0) return;
       ctx.fillStyle = "#8a6a45";
       ctx.fillRect(x - 12, BODEN - 3, 24, 4);
@@ -855,7 +827,7 @@
 
     // Längsriegel und Geländer je Lage, von unten nach oben
     G_LAGEN.forEach(function (y, lage) {
-      var p = geruestP(t, b0 + 0.55 + lage * 0.3, 0.5, 0.7 - lage * 0.15, 0.3);
+      var p = geruestP(t, b0 + (0.55 + lage * 0.3) * G, 0.5 * G, (0.7 - lage * 0.15) * G, 0.3 * G);
       if (p <= 0) return;
       var xe = G_X[0] + (G_X[n - 1] - G_X[0]) * p;
       rohr(G_X[0], y - 28, xe, y - 28, 3);
@@ -863,12 +835,12 @@
       rohr(G_X[0], y + 8, xe, y + 8, 3);
     });
     // Geländer der Dachfangwand
-    var pf = geruestP(t, b0 + 1.2, 0.4, 0.55, 0.3);
+    var pf = geruestP(t, b0 + 1.2 * G, 0.4 * G, 0.55 * G, 0.3 * G);
     if (pf > 0) rohr(G_X[0], G_OBEN, G_X[0] + (G_X[n - 1] - G_X[0]) * pf, G_OBEN, 3);
 
     // Diagonalen in jedem zweiten Feld
     for (var f = 0; f < n - 1; f += 2) {
-      var pd = geruestP(t, b0 + 0.9 + f * 0.04, 0.4, 0.6, 0.3);
+      var pd = geruestP(t, b0 + (0.9 + f * 0.04) * G, 0.4 * G, 0.6 * G, 0.3 * G);
       if (pd <= 0) continue;
       var x1 = G_X[f], x2 = G_X[f + 1];
       rohr(x1, BODEN - 6, x1 + (x2 - x1) * pd, BODEN - 6 - (BODEN - 6 - G_LAGEN[0] - 8) * pd, 2.5);
@@ -878,7 +850,7 @@
     // Beläge und Bordbretter, Feld für Feld eingelegt
     G_LAGEN.forEach(function (y, lage) {
       for (var f = 0; f < n - 1; f++) {
-        var pb = geruestP(t, b0 + 0.8 + lage * 0.3 + f * 0.05, 0.35, 0.3 - lage * 0.1 + f * 0.02, 0.3);
+        var pb = geruestP(t, b0 + (0.8 + lage * 0.3 + f * 0.05) * G, 0.35 * G, (0.3 - lage * 0.1 + f * 0.02) * G, 0.3 * G);
         if (pb <= 0) continue;
         var x1 = G_X[f] + 3, x2 = G_X[f + 1] - 3;
         ctx.save();
@@ -897,7 +869,7 @@
     });
 
     // Dachfangnetz vor der Traufe
-    var pn = geruestP(t, b0 + 1.4, 0.5, 0.45, 0.3);
+    var pn = geruestP(t, b0 + 1.4 * G, 0.5 * G, 0.45 * G, 0.3 * G);
     if (pn > 0) {
       ctx.save();
       ctx.globalAlpha = 0.55 * pn;
@@ -911,7 +883,7 @@
     }
 
     // Banner mit Logo am Geländer der ersten Lage
-    var pbn = geruestP(t, b0 + 1.6, 0.5, 0.5, 0.3);
+    var pbn = geruestP(t, b0 + 1.6 * G, 0.5 * G, 0.5 * G, 0.3 * G);
     if (pbn > 0 && LOGO_SCHRIFT) {
       var bx = 440, by = G_LAGEN[0] - 54, bb = 120, bh = 50;
       ctx.save();
@@ -967,7 +939,6 @@
     zeichneZiegel(t);
     zeichneKappen(t);
     zeichneSchneefang(t);
-    zeichneRichtbaum(t);
     zeichneSchornstein(t, "oben");
     zeichneRinne(t);
     zeichneBuesche(t);
