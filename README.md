@@ -83,3 +83,18 @@ VELUX-Konfigurator in einem neuen Fenster.
 
 Für die Datenschutzerklärung: Abschnitt zur Einbindung des VELUX-Konfigurators
 (VELUX Deutschland GmbH) ergänzen.
+
+## Impressum und Datenschutz
+
+`impressum.html` und `datenschutz.html` sind als Entwurf angelegt und auf die
+tatsächlich eingesetzte Technik abgestimmt (Vercel, Kontaktformular über Resend,
+VELUX-Konfigurator mit Zwei-Klick, selbst gehostete Schrift, keine Cookies).
+Rot-gestreift markiert und vor dem Livegang zu klären:
+
+- Geschäftsführer (Markus Tübel?) bestätigen
+- USt-IdNr. eintragen
+- Anschrift Handwerkskammer Dresden und Aufsichtsbehörde prüfen
+- Anschrift Vercel laut AV-Vertrag, AV-Verträge mit Vercel und Resend abschließen
+- Anbieter des E-Mail-Postfachs eintragen
+- Anschrift VELUX Deutschland GmbH prüfen
+- Beide Texte rechtlich prüfen lassen (z. B. Handwerkskammer)
