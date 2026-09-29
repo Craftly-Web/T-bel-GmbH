@@ -157,6 +157,31 @@
     document.querySelectorAll("[data-bereich]").forEach(function (b) { sichtbereich.observe(b); });
   }
 
+  // VELUX-Konfigurator: erst nach Klick laden (Zwei-Klick-Lösung)
+  document.querySelectorAll("[data-velux-id]").forEach(function (box) {
+    var id = (box.getAttribute("data-velux-id") || "").trim();
+    var link = box.getAttribute("data-velux-link");
+    var knopf = box.querySelector("[data-velux-laden]");
+    if (!knopf) return;
+    if (!id) {
+      // Ohne Partner-ID: allgemeinen Konfigurator bei VELUX öffnen
+      knopf.textContent = "Konfigurator bei VELUX öffnen";
+      knopf.addEventListener("click", function () { window.open(link, "_blank", "noopener"); });
+      var zweiter = box.querySelector(".knopf--dunkel");
+      if (zweiter) zweiter.hidden = true;
+      return;
+    }
+    knopf.addEventListener("click", function () {
+      var rahmen = document.createElement("iframe");
+      rahmen.src = "https://dachfensterkonfigurator.velux.de/konfigurator?embed=true&id=" + encodeURIComponent(id);
+      rahmen.title = "VELUX Dachfenster-Konfigurator";
+      rahmen.loading = "lazy";
+      rahmen.setAttribute("allow", "fullscreen");
+      box.innerHTML = "";
+      box.appendChild(rahmen);
+    });
+  });
+
   // Abschnitte beim Scrollen einblenden
   var elemente = document.querySelectorAll(".einblenden");
   if (!("IntersectionObserver" in window)) {

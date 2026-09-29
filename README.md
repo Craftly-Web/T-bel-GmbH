@@ -67,3 +67,19 @@ Damit etwas ankommt, bei Vercel (Production und Preview) setzen:
 - `MAIL_TO` — z. B. `kontakt@bedachung-holzbau.de`
 - `MAIL_FROM` — Absender auf der bei Resend verifizierten Domain,
   z. B. `formular@bedachung-holzbau.de` (Domain dafür per DNS bei Resend verifizieren)
+
+## VELUX Dachfenster-Konfigurator
+
+Banner auf der Startseite, Hinweis bei „Dachdeckung“ und eigene Seite
+`velux-konfigurator.html`. Der Konfigurator wird erst nach Klick geladen
+(Zwei-Klick-Lösung, keine Datenübertragung an VELUX vorher).
+
+**Einrichten:** In `velux-konfigurator.html` die VELUX-Partner-ID der Tübel GmbH in
+`data-velux-id=""` eintragen (steht im iFrame der bisherigen Website bzw. im VELUX
+Partnerportal). Dann wird eingebunden:
+`https://dachfensterkonfigurator.velux.de/konfigurator?embed=true&id=<ID>` –
+Anfragen gehen so direkt an Tübel. Ohne ID öffnet der Knopf den allgemeinen
+VELUX-Konfigurator in einem neuen Fenster.
+
+Für die Datenschutzerklärung: Abschnitt zur Einbindung des VELUX-Konfigurators
+(VELUX Deutschland GmbH) ergänzen.

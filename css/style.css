@@ -1647,3 +1647,87 @@ button, input, textarea { font: inherit; color: inherit; }
 .kontakt__text { margin: 18px 0 0; max-width: 460px; font-size: 17px; line-height: 1.6; color: var(--text-2); }
 
 .fuss__text { margin: 18px 0 0; max-width: 300px; font-size: 15px; line-height: 1.6; }
+
+/* ==========================================================================
+   VELUX Dachfenster-Konfigurator
+   ========================================================================== */
+
+.dachfenster-band {
+  position: relative;
+  overflow: hidden;
+  color: var(--putz);
+  background:
+    radial-gradient(70% 120% at 85% 10%, rgba(120, 160, 190, 0.28), rgba(35, 36, 40, 0) 60%),
+    linear-gradient(180deg, #26272c, #1d1e22);
+}
+.dachfenster-band__innen {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 40px 64px;
+  align-items: center;
+  padding: clamp(56px, 7vw, 88px) 0;
+}
+.dachfenster-band h2 { margin: 0; color: var(--putz); font-size: clamp(28px, 3.4vw, 42px); font-weight: 800; font-stretch: 94%; line-height: 1.1; }
+.dachfenster-band h2 em { font-style: normal; color: var(--ziegel-hell); }
+.dachfenster-band p { margin: 18px 0 0; max-width: 560px; font-size: 17.5px; line-height: 1.6; color: rgba(246, 240, 230, 0.78); }
+.dachfenster-band .knoepfe { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.dachfenster-band__punkte { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 22px 0 0; padding: 0; list-style: none; font-size: 14.5px; font-weight: 600; color: rgba(246, 240, 230, 0.85); }
+.dachfenster-band__punkte li { display: flex; align-items: center; gap: 8px; }
+.dachfenster-band__punkte li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ziegel-hell); }
+.dachfenster-bild { width: 100%; max-width: 420px; justify-self: end; }
+@media (max-width: 860px) {
+  .dachfenster-band__innen { grid-template-columns: 1fr; }
+  .dachfenster-bild { justify-self: start; max-width: 320px; }
+}
+
+.hinweis-velux {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: 6px;
+  background: var(--schiefer);
+  color: var(--putz);
+}
+.hinweis-velux svg { width: 44px; height: 44px; flex: none; }
+.hinweis-velux b { display: block; font-size: 16px; }
+.hinweis-velux span { display: block; font-size: 14px; color: rgba(246, 240, 230, 0.72); }
+.hinweis-velux .knopf { margin-left: auto; min-height: 42px; padding: 0 16px; font-size: 14.5px; flex: none; }
+@media (max-width: 560px) { .hinweis-velux { flex-wrap: wrap; } .hinweis-velux .knopf { margin-left: 0; } }
+
+/* Schritte auf der Konfigurator-Seite */
+.schritte-klein { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 32px; }
+.schritte-klein div { padding: 22px; background: #fffaf2; border: 1px solid var(--linie); border-radius: 6px; }
+.schritte-klein b { display: block; font-size: 14px; font-weight: 700; font-stretch: 112%; letter-spacing: 0.08em; color: var(--ziegel); }
+.schritte-klein h3 { margin: 8px 0 6px; font-size: 18px; font-weight: 700; }
+.schritte-klein p { margin: 0; font-size: 15.5px; color: var(--text-2); line-height: 1.55; }
+@media (max-width: 760px) { .schritte-klein { grid-template-columns: 1fr; } }
+
+/* Zwei-Klick-Lösung */
+.konfigurator {
+  position: relative;
+  border: 1px solid var(--linie);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fffaf2;
+}
+.konfigurator iframe { display: block; width: 100%; height: 1400px; border: 0; background: #fff; }
+.einwilligung {
+  display: grid;
+  place-items: center;
+  min-height: 420px;
+  padding: 40px 24px;
+  text-align: center;
+  background:
+    linear-gradient(rgba(35, 36, 40, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(35, 36, 40, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.einwilligung > div { max-width: 560px; }
+.einwilligung svg { width: 88px; height: 88px; margin: 0 auto 18px; }
+.einwilligung h2 { margin: 0 0 12px; font-size: 26px; }
+.einwilligung p { margin: 0 0 22px; font-size: 15.5px; line-height: 1.6; color: var(--text-2); }
+.einwilligung p a { color: var(--ziegel-dunkel); text-decoration: underline; }
+.einwilligung .knoepfe { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.knopf[hidden] { display: none; }
