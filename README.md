@@ -44,7 +44,11 @@ in Tübel-Kleidung begleitet jeden Schritt, ein Schrägaufzug bringt die Ziegel,
 am Gerüst hängt das Firmenbanner mit Telefonnummer. Doppelklick auf den Hero spielt sie erneut ab. Bei
 „Bewegung reduzieren" im Betriebssystem steht sofort das fertige Dach da.
 
-**Offen:** Originallogo als Vektordatei (das Logo ist nachgebaut),
+**Logo:** aus dem Original (Jubiläumsgrafik) als Vektor nachgezeichnet: gelbes Haus,
+rotes Dach mit Schornstein, TübeL mit weißer Kontur. Liegt als Symbol `#logo`
+in jeder Seite, als Datei `bilder/logo.svg` und als Pfade in `js/dach.js`.
+
+**Offen:**
 hochauflösende Fotos für Referenzen, echte Texte, Impressum und Datenschutz.
 
 ## Anfrageformular

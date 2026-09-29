@@ -161,7 +161,7 @@ button, input, textarea { font: inherit; color: inherit; }
 }
 
 .logo { display: flex; align-items: center; gap: 14px; flex: none; }
-.logo__zeichen { width: 104px; height: auto; }
+.logo__zeichen { width: 112px; height: auto; }
 .logo__zusatz {
   display: flex;
   flex-direction: column;
@@ -666,8 +666,7 @@ button, input, textarea { font: inherit; color: inherit; }
   padding-bottom: 48px;
   border-bottom: 1px solid rgba(246, 240, 230, 0.12);
 }
-.fuss .logo__zeichen { width: 124px; }
-.fuss .logo__zeichen { --logo-schrift: var(--putz); }
+.fuss .logo__zeichen { width: 140px; }
 .fuss .ph-text { margin-top: 22px; max-width: 280px; }
 .fuss .ph-text .ph { background: rgba(246, 240, 230, 0.12); }
 .fuss h3 {
