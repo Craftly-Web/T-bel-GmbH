@@ -225,13 +225,13 @@
       bewBox.innerHTML = "";
       liste.slice(0, 6).forEach(function (b) {
         var fig = el("figure", "bewertung");
-        fig.appendChild(sterneEl(b.sterne || 5));
+        if (b.sterne) fig.appendChild(sterneEl(b.sterne));
         fig.appendChild(el("blockquote", null, b.text));
         var cap = el("figcaption");
         cap.appendChild(el("span", "kreis", (b.name || "?").trim().charAt(0).toUpperCase()));
         var wer = el("div");
         wer.appendChild(el("b", null, b.name || "Google-Nutzer"));
-        wer.appendChild(el("span", null, (b.datum ? b.datum + " · " : "") + "über Google"));
+        wer.appendChild(el("span", null, (b.datum ? b.datum + " · " : "") + "Google-Bewertung"));
         cap.appendChild(wer);
         fig.appendChild(cap);
         bewBox.appendChild(fig);
@@ -251,8 +251,10 @@
     }
 
     var g = daten.gesamt || {};
-    var schnittWert = g.sterne || (liste.length ? liste.reduce(function (s, b) { return s + (b.sterne || 5); }, 0) / liste.length : null);
-    var anzahl = g.anzahl || liste.length;
+    // Gesamtwert nur zeigen, wenn er aus dem Google-Profil eingetragen ist –
+    // ein Schnitt aus den ausgewählten Bewertungen wäre irreführend.
+    var schnittWert = g.sterne && g.anzahl ? g.sterne : null;
+    var anzahl = g.anzahl;
     var schnitt = document.querySelector("[data-bewertung-schnitt]");
     if (schnitt && schnittWert) {
       schnitt.appendChild(el("b", null, schnittWert.toFixed(1).replace(".", ",")));
