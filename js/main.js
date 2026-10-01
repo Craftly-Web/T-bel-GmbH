@@ -182,6 +182,88 @@
     });
   });
 
+  // Karriereseite: Knöpfe wählen den passenden Beruf im Bewerbungsformular vor
+  document.querySelectorAll("[data-beruf]").forEach(function (k) {
+    k.addEventListener("click", function () {
+      var wert = k.getAttribute("data-beruf");
+      document.querySelectorAll('#bewerben input[name="anliegen"]').forEach(function (r) {
+        r.checked = r.value === wert;
+      });
+    });
+  });
+
+  // Google-Bewertungen aus der eingetragenen Liste anzeigen (Texte nur als Text, nie als HTML)
+  var bewBox = document.querySelector("[data-bewertungen]");
+  var bewQuelle = document.getElementById("bewertungen-daten");
+  if (bewBox && bewQuelle) {
+    var daten = {};
+    try { daten = JSON.parse(bewQuelle.textContent); } catch (e) { daten = {}; }
+    var liste = (daten.bewertungen || []).filter(function (b) { return b && b.text; });
+    var maps = bewBox.getAttribute("data-maps");
+    var schreiben = daten.placeId ? "https://search.google.com/local/writereview?placeid=" + encodeURIComponent(daten.placeId) : maps;
+
+    var sterneEl = function (n) {
+      var s = document.createElement("span");
+      s.className = "sterne";
+      s.setAttribute("aria-label", n + " von 5 Sternen");
+      for (var i = 1; i <= 5; i++) {
+        var st = document.createElement("span");
+        st.textContent = "★";
+        if (i > Math.round(n)) st.className = "leer";
+        s.appendChild(st);
+      }
+      return s;
+    };
+    var el = function (tag, klasse, text) {
+      var e = document.createElement(tag);
+      if (klasse) e.className = klasse;
+      if (text != null) e.textContent = text;
+      return e;
+    };
+
+    if (liste.length) {
+      bewBox.innerHTML = "";
+      liste.slice(0, 6).forEach(function (b) {
+        var fig = el("figure", "bewertung");
+        fig.appendChild(sterneEl(b.sterne || 5));
+        fig.appendChild(el("blockquote", null, b.text));
+        var cap = el("figcaption");
+        cap.appendChild(el("span", "kreis", (b.name || "?").trim().charAt(0).toUpperCase()));
+        var wer = el("div");
+        wer.appendChild(el("b", null, b.name || "Google-Nutzer"));
+        wer.appendChild(el("span", null, (b.datum ? b.datum + " · " : "") + "über Google"));
+        cap.appendChild(wer);
+        fig.appendChild(cap);
+        bewBox.appendChild(fig);
+      });
+      var knoepfe = el("div", "bewertungen-knoepfe");
+      var lesen = el("a", "knopf knopf--dunkel", "Alle Bewertungen auf Google");
+      lesen.href = maps; lesen.target = "_blank"; lesen.rel = "noopener";
+      var neu = el("a", "knopf knopf--rot", "Bewertung schreiben");
+      neu.href = schreiben; neu.target = "_blank"; neu.rel = "noopener";
+      knoepfe.appendChild(lesen); knoepfe.appendChild(neu);
+      bewBox.parentNode.insertBefore(knoepfe, bewBox.nextSibling);
+    } else if (daten.placeId) {
+      var leerKnoepfe = bewBox.querySelector(".bewertungen-knoepfe");
+      var neu2 = el("a", "knopf knopf--rot", "Bewertung schreiben");
+      neu2.href = schreiben; neu2.target = "_blank"; neu2.rel = "noopener";
+      if (leerKnoepfe) leerKnoepfe.appendChild(neu2);
+    }
+
+    var g = daten.gesamt || {};
+    var schnittWert = g.sterne || (liste.length ? liste.reduce(function (s, b) { return s + (b.sterne || 5); }, 0) / liste.length : null);
+    var anzahl = g.anzahl || liste.length;
+    var schnitt = document.querySelector("[data-bewertung-schnitt]");
+    if (schnitt && schnittWert) {
+      schnitt.appendChild(el("b", null, schnittWert.toFixed(1).replace(".", ",")));
+      var r = el("div");
+      r.appendChild(sterneEl(schnittWert));
+      r.appendChild(el("span", null, anzahl + (anzahl === 1 ? " Bewertung" : " Bewertungen") + " auf Google"));
+      schnitt.appendChild(r);
+      schnitt.hidden = false;
+    }
+  }
+
   // Abschnitte beim Scrollen einblenden
   var elemente = document.querySelectorAll(".einblenden");
   if (!("IntersectionObserver" in window)) {

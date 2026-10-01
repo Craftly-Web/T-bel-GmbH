@@ -115,6 +115,7 @@ export async function POST(req) {
     email:     sauber(body.email),
     telefon:   sauber(body.telefon),
     ort:       sauber(body.ort),
+    alter:     sauber(body.alter).slice(0, 20),
     anliegen:  body.anliegen.map(sauber).filter(Boolean).slice(0, 12),
     rueckruf:  Boolean(body.rueckruf),
     nachricht: String(body.nachricht ?? '').trim(),
@@ -160,13 +161,15 @@ export async function POST(req) {
     return zuVieleAnfragen(willJson);
   }
 
+  const bewerbung = daten.anliegen.some((a) => /Ausbildung|Praktikum|Bewerbung/i.test(a));
   const text = [
-    'Neue Anfrage über die Website',
+    bewerbung ? 'Neue Bewerbung über die Website' : 'Neue Anfrage über die Website',
     '='.repeat(46), '',
     `Name:            ${daten.name}`,
     `Telefon:         ${daten.telefon || '—'}`,
     `E-Mail:          ${daten.email || '—'}`,
-    `Ort des Objekts: ${daten.ort || '—'}`,
+    ...(daten.alter ? [`Alter:           ${daten.alter}`] : []),
+    `Ort:             ${daten.ort || '—'}`,
     `Anliegen:        ${daten.anliegen.join(', ') || '—'}`,
     `Rückruf:         ${daten.rueckruf ? 'ja, bitte zurückrufen' : 'nein'}`,
     '', 'Nachricht:', '-'.repeat(46),
@@ -192,7 +195,7 @@ export async function POST(req) {
         from: `"Website Tübel" <${MAIL_FROM}>`,
         to: [MAIL_TO],
         ...(istEmail(daten.email) ? { reply_to: `"${anzeigename}" <${daten.email}>` } : {}),
-        subject: `Anfrage über die Website — ${daten.name}${daten.rueckruf ? ' (Rückruf)' : ''}`,
+        subject: `${bewerbung ? 'Bewerbung' : 'Anfrage'} über die Website — ${daten.name}${daten.rueckruf ? ' (Rückruf)' : ''}`,
         text,
       }),
       signal: abbruch.signal,

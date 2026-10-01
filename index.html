@@ -50,6 +50,10 @@
     <symbol id="i-links" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></symbol>
     <symbol id="i-rechts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></symbol>
     <symbol id="i-dachfenster" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 40 24 8l20 32"/><path d="M17 36l4-14h10l4 14z" fill="currentColor" fill-opacity=".18"/><path d="M26 22l-2 14M19 29h14"/></symbol>
+    <symbol id="i-sonne" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+    <symbol id="i-hoch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4v-5h4v-5h4V5h4"/><path d="M15 5h5v5"/></symbol>
+    <symbol id="i-solar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 7 7h14l-4 10z"/><path d="M5 12h14M12 7l-3 10M16.5 7l-3 10"/><path d="M10 21h6M13 17v4"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14.5 20a4.5 4.5 0 0 1 7-3.7"/></symbol>
   </defs>
 </svg>
 
@@ -64,7 +68,7 @@
       <a href="leistungen.html">Leistungen</a>
       <a href="referenzen.html">Referenzen</a>
       <a href="ueber-uns.html">Über uns</a>
-      <a href="#karriere">Karriere</a>
+      <a href="karriere.html">Karriere</a>
       <a href="kontakt.html">Kontakt</a>
     </nav>
 
@@ -274,15 +278,52 @@
     </div>
   </section>
 
+  <!-- Google-Bewertungen -->
+  <section class="abschnitt" id="bewertungen" aria-labelledby="bew-titel">
+    <div class="wrap">
+      <div class="bewertungen-kopf einblenden">
+        <div>
+          <div class="augenbraue"><span class="augenbraue__text">Google-Bewertungen</span></div>
+          <h2 id="bew-titel">Das sagen unsere Kunden</h2>
+        </div>
+        <div class="bewertung-schnitt" data-bewertung-schnitt hidden></div>
+      </div>
+
+      <!--
+        Echte Google-Bewertungen hier eintragen (aus dem Google-Unternehmensprofil kopieren).
+        "gesamt": Durchschnitt und Anzahl laut Google, z. B. {"sterne": 4.9, "anzahl": 23}.
+        "placeId": Google Place ID der Tübel GmbH, damit „Bewertung schreiben“ direkt öffnet.
+        Ohne Einträge zeigt die Seite nur die Links zu Google – nichts Erfundenes.
+      -->
+      <script type="application/json" id="bewertungen-daten">
+{
+  "gesamt": { "sterne": null, "anzahl": null },
+  "placeId": "",
+  "bewertungen": [
+  ]
+}
+      </script>
+
+      <div class="bewertungen einblenden" data-bewertungen data-maps="https://www.google.com/maps/search/?api=1&amp;query=T%C3%BCbel+GmbH+Niederdorfstra%C3%9Fe+60+Rammenau">
+        <div class="bewertungen-leer">
+          <p>Sie haben schon mit uns gebaut? Wir freuen uns über Ihre Erfahrung auf Google – und neue Kunden über einen ehrlichen Eindruck.</p>
+          <div class="bewertungen-knoepfe">
+            <a class="knopf knopf--dunkel" href="https://www.google.com/maps/search/?api=1&amp;query=T%C3%BCbel+GmbH+Niederdorfstra%C3%9Fe+60+Rammenau" target="_blank" rel="noopener">Bewertungen auf Google lesen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Karriere -->
   <section class="karriere" id="karriere" aria-label="Karriere">
     <div class="wrap karriere__innen einblenden">
       <div>
         <div class="augenbraue augenbraue--hell"><span class="augenbraue__text" style="color:var(--ziegel-hell)">Karriere</span></div>
-        <h2>Handwerk mit Zukunft – wir bilden aus.</h2>
-        <p class="karriere__text">Bei uns arbeiten Dachdecker, Zimmerer und Klempner Hand in Hand, aktuell lernen zwei Auszubildende das Handwerk. Sie möchten dazugehören? Melden Sie sich bei uns.</p>
+        <h2>Deine Ausbildung – mit Aussicht von ganz oben.</h2>
+        <p class="karriere__text">Dachdecker/in oder Zimmerer/in: Wir bilden aus, seit es uns gibt. Draußen arbeiten, im Team anpacken und am Abend sehen, was du geschafft hast.</p>
       </div>
-      <a class="knopf knopf--rot" href="kontakt.html">Jetzt melden <svg><use href="#i-pfeil"/></svg></a>
+      <a class="knopf knopf--rot" href="karriere.html">Ausbildung entdecken <svg><use href="#i-pfeil"/></svg></a>
     </div>
   </section>
 
@@ -328,7 +369,7 @@
       </div>
       <div>
         <h3>Betrieb</h3>
-        <ul><li><a href="ueber-uns.html">Über uns</a></li><li><a href="referenzen.html">Referenzen</a></li><li><a href="#karriere">Karriere</a></li><li><a href="kontakt.html">Kontakt</a></li></ul>
+        <ul><li><a href="ueber-uns.html">Über uns</a></li><li><a href="referenzen.html">Referenzen</a></li><li><a href="karriere.html">Karriere</a></li><li><a href="kontakt.html">Kontakt</a></li></ul>
       </div>
       <div>
         <h3>Kontakt</h3>

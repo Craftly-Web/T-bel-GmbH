@@ -98,3 +98,29 @@ Rot-gestreift markiert und vor dem Livegang zu klären:
 - Anbieter des E-Mail-Postfachs eintragen
 - Anschrift VELUX Deutschland GmbH prüfen
 - Beide Texte rechtlich prüfen lassen (z. B. Handwerkskammer)
+
+## Google-Bewertungen
+
+Abschnitt auf der Startseite (`#bewertungen`). Die Bewertungen stehen als Liste im
+Block `<script type="application/json" id="bewertungen-daten">` in `index.html`:
+
+```json
+{
+  "gesamt": { "sterne": 4.9, "anzahl": 23 },
+  "placeId": "ChIJ...",
+  "bewertungen": [
+    { "name": "Vorname N.", "sterne": 5, "datum": "vor 2 Monaten", "text": "Text aus Google" }
+  ]
+}
+```
+
+Nur echte Bewertungen aus dem Google-Profil eintragen (höchstens 6 werden gezeigt).
+Ohne Einträge erscheint ein Hinweis mit Link zu Google. Mit `placeId` öffnet
+„Bewertung schreiben“ direkt das Google-Bewertungsfenster.
+
+## Karriere
+
+`karriere.html` richtet sich an Schüler/innen: Ausbildung Dachdecker/in und
+Zimmerer/in, Praktikum, Karriereleiter, FAQ und Kurzbewerbung (läuft über
+`/api/kontakt`, Betreff „Bewerbung über die Website“). Offen: Ausbildungsvergütung
+und Übernahme bestätigen (rot markiert).
